@@ -132,6 +132,7 @@ options_imp::options_imp(QWidget *parent):
   // General tab
   connect(comboI18n, SIGNAL(currentIndexChanged(int)), this, SLOT(enableApplyButton()));
   connect(checkAltRowColors, SIGNAL(toggled(bool)), this, SLOT(enableApplyButton()));
+  connect(checkTextStateColors, SIGNAL(toggled(bool)), this, SLOT(enableApplyButton()));
   connect(checkShowSystray, SIGNAL(toggled(bool)), this, SLOT(enableApplyButton()));
   connect(checkCloseToSystray, SIGNAL(toggled(bool)), this, SLOT(enableApplyButton()));
   connect(checkMinimizeToSysTray, SIGNAL(toggled(bool)), this, SLOT(enableApplyButton()));
@@ -358,6 +359,7 @@ void options_imp::saveOptions() {
   // General preferences
   pref.setLocale(locale);
   pref.setAlternatingRowColors(checkAltRowColors->isChecked());
+  pref.setTextStateColorsEnabled(checkTextStateColors->isChecked());
   pref.setSystrayIntegration(systrayIntegration());
   pref.setTrayIconStyle(TrayIcon::Style(comboTrayIcon->currentIndex()));
   pref.setCloseToTray(closeToTray());
@@ -532,6 +534,7 @@ void options_imp::loadOptions() {
   const Preferences pref;
   setLocale(pref.getLocale());
   checkAltRowColors->setChecked(pref.useAlternatingRowColors());
+  checkTextStateColors->setChecked(pref.isTextStateColorsEnabled());
   checkShowSystray->setChecked(pref.systrayIntegration());
   checkShowSplash->setChecked(!pref.isSlashScreenDisabled());
   if (checkShowSystray->isChecked()) {

@@ -126,6 +126,15 @@ public:
     setValue("Preferences/General/AlternatingRowColors", b);
   }
 
+  bool isTextStateColorsEnabled() const {
+    return value(QString::fromUtf8("Preferences/General/TextStateColors"), true).toBool();
+  }
+
+  void setTextStateColorsEnabled(bool b) {
+    setValue("Preferences/General/TextStateColors", b);
+  }
+
+
   bool useRandomPort() const {
     return value(QString::fromUtf8("Preferences/General/UseRandomPort"), false).toBool();
   }

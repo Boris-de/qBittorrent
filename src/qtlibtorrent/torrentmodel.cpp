@@ -32,6 +32,7 @@
 
 #include "torrentmodel.h"
 #include "torrentpersistentdata.h"
+#include "preferences.h"
 #include "qbtsession.h"
 
 using namespace libtorrent;
@@ -50,11 +51,13 @@ TorrentModelItem::TorrentModelItem(const QTorrentHandle &h)
 
 TorrentModelItem::State TorrentModelItem::state() const
 {
+  Preferences pref;
+  bool use_simple_colors = !pref.isTextStateColorsEnabled();
   try {
     // Pause or Queued
     if (m_torrent.is_paused()) {
       m_icon = QIcon(":/Icons/skin/paused.png");
-      m_fgColor = QColor("red");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("red");
       return m_torrent.is_seed() ? STATE_PAUSED_UP : STATE_PAUSED_DL;
     }
     if (m_torrent.is_queued()) {
@@ -62,7 +65,7 @@ TorrentModelItem::State TorrentModelItem::state() const
           && m_torrent.state() != torrent_status::checking_resume_data
           && m_torrent.state() != torrent_status::checking_files) {
         m_icon = QIcon(":/Icons/skin/queued.png");
-        m_fgColor = QColor("grey");
+        m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
         return m_torrent.is_seed() ? STATE_QUEUED_UP : STATE_QUEUED_DL;
       }
     }
@@ -70,20 +73,20 @@ TorrentModelItem::State TorrentModelItem::state() const
     switch(m_torrent.state()) {
     case torrent_status::allocating:
       m_icon = QIcon(":/Icons/skin/stalledDL.png");
-      m_fgColor = QColor("grey");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
       return STATE_ALLOCATING;
     case torrent_status::downloading_metadata:
       m_icon = QIcon(":/Icons/skin/downloading.png");
-      m_fgColor = QColor("green");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("green");
       return STATE_DOWNLOADING_META;
     case torrent_status::downloading: {
       if (m_torrent.download_payload_rate() > 0) {
         m_icon = QIcon(":/Icons/skin/downloading.png");
-        m_fgColor = QColor("green");
+        m_fgColor = use_simple_colors ? QColor("black") : QColor("green");
         return STATE_DOWNLOADING;
       } else {
         m_icon = QIcon(":/Icons/skin/stalledDL.png");
-        m_fgColor = QColor("grey");
+        m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
         return STATE_STALLED_DL;
       }
     }
@@ -91,33 +94,33 @@ TorrentModelItem::State TorrentModelItem::state() const
     case torrent_status::seeding:
       if (m_torrent.upload_payload_rate() > 0) {
         m_icon = QIcon(":/Icons/skin/uploading.png");
-        m_fgColor = QColor("orange");
+        m_fgColor = use_simple_colors ? QColor("black") : QColor("orange");
         return STATE_SEEDING;
       } else {
         m_icon = QIcon(":/Icons/skin/stalledUP.png");
-        m_fgColor = QColor("grey");
+        m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
         return STATE_STALLED_UP;
       }
     case torrent_status::queued_for_checking:
       m_icon = QIcon(":/Icons/skin/checking.png");
-      m_fgColor = QColor("grey");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
       return STATE_QUEUED_CHECK;
     case torrent_status::checking_resume_data:
       m_icon = QIcon(":/Icons/skin/checking.png");
-      m_fgColor = QColor("grey");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
       return STATE_QUEUED_FASTCHECK;
     case torrent_status::checking_files:
       m_icon = QIcon(":/Icons/skin/checking.png");
-      m_fgColor = QColor("grey");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("grey");
       return m_torrent.is_seed() ? STATE_CHECKING_UP : STATE_CHECKING_DL;
     default:
       m_icon = QIcon(":/Icons/skin/error.png");
-      m_fgColor = QColor("red");
+      m_fgColor = use_simple_colors ? QColor("black") : QColor("red");
       return STATE_INVALID;
     }
   } catch(invalid_handle&) {
     m_icon = QIcon(":/Icons/skin/error.png");
-    m_fgColor = QColor("red");
+    m_fgColor = use_simple_colors ? QColor("black") : QColor("red");
     return STATE_INVALID;
   }
 }
